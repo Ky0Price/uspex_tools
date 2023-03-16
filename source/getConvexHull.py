@@ -338,8 +338,8 @@ class read_convexhull:
                 if ele == value:
                     potcarSource = os.path.join(self.potpath, key)
                     potcarTarget = os.path.join(targetpath, 'POTCAR') 
-                    print(potcarSource)
-                    print(potcarTarget)
+                    #print(potcarSource)
+                    #print(potcarTarget)
                     copyfile(potcarSource,potcarTarget)
                     
         
