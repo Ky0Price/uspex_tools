@@ -20,7 +20,7 @@ pos_savepath = 'poscars'
 # 存放单个POSCAR文件的目标路径
 potpath = 'input_files'
 # 存放各种POTCAR文件的路径
-fitreq = 0.03
+fitreq = 0.0
 
 # In[3]
 #创建对象
