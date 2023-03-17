@@ -44,13 +44,18 @@ class read_convexhull:
         self.refs = []
         self.poscar_silced = []
         self.poscar_silced_selected = []
+        self.poscarpaths = []
+        self.gibbs = []
         
         
 
 
 
-    # 读取数据文件
+    
     def loadfile(self):
+    数据文件
+        对象的基本属性
+        ：id、组成、总焓、体积、fitness
         import numpy as np
         np.set_printoptions(precision=None,suppress=True)
         self.data=np.loadtxt(self.filepath,skiprows=self.datastart-1)
@@ -86,6 +91,9 @@ class read_convexhull:
         return  self
 
     def selectByFitness(self):
+        # 依据fitness的值选取结构，上限为用户输入的fitreq
+        # 感觉这里最好是新建个对象，而不是直接修改原来的对象，也就是弄个子类
+        # 但是我懒得弄了，就这样吧，反正能用
         if self.filetype!='extended_convex_hull':
             print('ERR! To use this function, filetype should be extended_convex_hull')
             return
@@ -101,6 +109,12 @@ class read_convexhull:
         return self
 
     def selectSubsystem(self):
+    # 获取子系统的结构
+    # 什么是子系统？
+    # 子系统是指用户自己定义的一部分原子，
+    # 比如用户想要从一个C-H-O-N的系统中获取含有C、H、O的结构，那么这个子系统就是C、H、O
+    # 在这里，我们利用subsystem这个参数来定义子系统
+    # subsystem是一个列表，列表中的元素是element中对应元素的序号
         compnum=-1
         if self.filetype=='extended_convex_hull':
             for comp in self.compositions_vector:
@@ -151,7 +165,10 @@ class read_convexhull:
         return self
 
 
-    def getToten(self):  #如果文件形式是extended_convex_hull，输出以化学式为单位的整体能量；如果是individuals，则输出单个原子的平均能量
+    def getToten(self):  
+        # 如果文件形式是extended_convex_hull，
+        # 输出以化学式为单位的整体能量；
+        # 如果是individuals，则输出单个原子的平均能量
         if self.subsystem==None:
             for en,comp in zip(self.enthalpy,self.compositions_vector):
                 totatom=sum(comp)
@@ -173,7 +190,9 @@ class read_convexhull:
             return self.totalEnergy_sub
 
 
-    def getHf(self): #如果文件形式是extended_convex_hull，输出以化学式为单位的整体能量；如果是individuals，则输出单个原子的平均能量
+    def getHf(self): 
+        # 如果文件形式是extended_convex_hull，输出以化学式为单位的整体能量；
+        # 如果是individuals，则输出单个原子的平均能量
         if self.subsystem == None:
             for comp,toten in zip(self.compositions_vector,self.totalEnergy):
                 Hf=toten
@@ -190,6 +209,7 @@ class read_convexhull:
         
 
     def getRefs(self):
+        # 获得ase画相图所需要的数据格式refs
         if self.subsystem == None:
             for comp,Hf in zip(self.compositions,self.Hf):
                 ref=(comp,Hf)
@@ -201,9 +221,9 @@ class read_convexhull:
         return self.refs
 
     def remove_dup(self): 
-        # not available for subsystem yet；
-        # 内部函数，调用方便，
-        # 但是目前只针对id，compositions，compositions_vector,totalEnergy,hf,enthalpy 做筛选
+        # 目前不对子系统进行筛选，只对全系统进行筛选
+        # 内部函数，调用方便；提供了一个同名的外部函数，可以直接调用
+        # 目前只针对id，compositions，compositions_vector,totalEnergy,hf,enthalpy 做筛选
         import numpy as np
 
         # dict={'id'=,'comp'=,'Hf'=}
@@ -257,9 +277,9 @@ class read_convexhull:
         poscars_ini = []
         for line in open(self.pospath,"r"):
             poscars_ini.append(line)
-        poscarStart = 'EA' # 每个单独的POSCAR都以EA为开头
+        poscarStart = 'EA' # USPEX输出的每个单独的POSCAR都以EA为开头
         #poscar_flies = [] # 一个列表，每一个元素就是一个单独的POSCAR文件
-        start_loc = [] # 每个POSCAR开始的那一行的位置
+        start_loc = [] # 每个POSCAR开始的那一行的位置，保存为一个列表
         for line_num in range(len(poscars_ini)):
             if poscars_ini[line_num][0:2] == poscarStart:
                 start_loc.append(line_num)
@@ -293,13 +313,14 @@ class read_convexhull:
             self.poscar_silced_selected.append(poscar)
 
     def poscar_buildfile(self):
-        # 开始给每个POSCAR创建单独的文件夹，以方便后续VASP计算\
+        # 开始给每个POSCAR创建单独的文件夹，以方便后续VASP计算和吉布斯能量计算
         import os
         if os.path.exists(self.pos_savepath):
             print('save path already exists')
         else:
             os.mkdir(self.pos_savepath)
-        file_paths = []
+        # file_paths = [] 暂时好像没用
+        poscarpaths = []
         if self.poscar_silced_selected != []:
             poscars = self.poscar_silced_selected
         else:
@@ -309,13 +330,21 @@ class read_convexhull:
             filepath = os.path.join(self.pos_savepath, filename)
             if os.path.exists(filepath) == False:
                 os.mkdir(filepath)
-            file_paths.append(filepath)
+            # file_paths.append(filepath) 暂时似乎没用
             poscarpath = os.path.join(filepath, 'POSCAR')
+            poscarpaths.append(poscarpath)
             with open(poscarpath,'w') as f:
                 for line in poscar:
                     f.write(line)
+        # 保存POSCAR的路径，方便后续计算吉布斯能量和其他操作
+        self.poscarpaths = poscarpaths
         
     def getPOTCAR(self):
+        """
+        参数解释
+        potpath: POTCAR文件所在的路径
+        pos_savepath: POSCAR文件所要存储的目标路径
+        """
         import os
         from shutil import copyfile
         potcar_dic={} # 一共有多少种POTCAR，key为POTCAR文件名，value为POTCAR所含元素
@@ -342,12 +371,44 @@ class read_convexhull:
                     #print(potcarTarget)
                     copyfile(potcarSource,potcarTarget)
                     
-        
+    def getGibbs(self,mass,gels,T=[298.15]):
+        # 参数解释
+        # mass:元素质量，字典形式，key为元素符号，value为质量
+        # gels:各元素的固体相吉布斯能，字典形式，key为元素符号，value为固体相吉布斯能
+        # T:计算吉布斯能的温度，默认为298.15K，可自行设定，通常应该是一个列表
+        #导入predcitG.py中的函数，计算吉布斯能,默认是计算298.15K的吉布斯能
+        from PredictG import predictG
+
+        #针对每个POSCAR文件，计算不同给定温度下的吉布斯能
+        for poscarpath,compositon,hf in zip(self.poscarpaths, self.compositions,self.Hf):
+            gibbs = predictG(
+                compositon,
+                hf,
+                poscarpath,
+                mass,
+                gels,
+            )
+            dGs = []
+            for t in T:
+                dG = gibbs.dG(t, vol_per_atom=False)
+                dGs.append(dG)
+            # 以字典形式，存储comp和吉布斯能, key为comp，value为吉布斯能,作为列表元素，
+            # 存入self.gibbs中
+            gibbs_dict = {compositon:dGs}
+            self.gibbs.append(gibbs_dict)
+
+
+                
+
+      
+
+
+
 
         
         
          
-def remove_dup(ids,compositions,compositions_vectors,enthalpys,Hfs): #not available for subsystem yet，作为外部函数；不推荐使用
+def remove_dup(ids,compositions,compositions_vectors,enthalpys,Hfs):
     import numpy as np
 
     # dict={'id'=,'comp'=,'Hf'=}
