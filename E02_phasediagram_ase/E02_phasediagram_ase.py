@@ -1,7 +1,7 @@
 # 处理USPEX输出文件，并利用ase库绘制相图
 # 作者：zzn
-# 示例脚本，分cell代码块
-
+# 示例脚本，分cell代码块,可以在jupyter notebook，vscode，spyder等环境下运行
+# 自己用的时候建议根据需要修改代码，而且没必要分cell，直接运行就行
 
 from os import mkdir, path  # 用于创建文件夹
 
