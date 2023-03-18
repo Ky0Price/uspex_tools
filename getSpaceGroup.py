@@ -1,10 +1,14 @@
+# 处理文件夹中的POSCAR文件，获取其对称群
+# 本脚本尚处于老版本，请等待更新适配新版本
 def getSpaceGroup(path,symtole=1e-1):
     # path指存放POSCAR的文件夹目录的列表
     # 本脚本暂时无法处理子文件夹
     # symtole指找对称群时的tolerance
+    import os
+
     import ase.io.vasp
     import ase.spacegroup
-    import os
+
     #遍历文件夹中的文件
     sglist = []
     for i in path:

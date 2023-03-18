@@ -1,3 +1,4 @@
+# 外部函数，用于计算参考结构的生成焓，以便后续计算相图和检验uspex的结果
 def FormationEnCalc(idlist,system,moleEn,atomEn,op=1):
     # idlist是每一个结构对应的一个ID，后续会用到，随便什么形式，但在本脚本中应统一
     # moleEn指分子总能量，是一个列表
