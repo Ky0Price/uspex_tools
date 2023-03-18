@@ -3,13 +3,15 @@
 # 示例脚本，分cell代码块,可以在jupyter notebook，vscode，spyder等环境下运行
 # 自己用的时候建议根据需要修改代码，而且没必要分cell，直接运行就行
 
-from os import mkdir, path  # 用于创建文件夹
 
+
+
+# In[1]: 导入相关依赖库
 import matplotlib  # 绘图库
 from ase import phasediagram  # 用于绘制相图
 from FormationEnCalc import FE2refs, FormationEnCalc  # 计算外部数据的形成焓
-# In[1]: 导入依赖库
 from getConvexHull import read_convexhull  # 读取USPEX输出文件
+from os import mkdir, path  # 用于创建文件夹
 
 # In[2]: 解决乱码问题
 matplotlib.rcParams['font.sans-serif'] = ['SimHei'] # 指定默认字体
