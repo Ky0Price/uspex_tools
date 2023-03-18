@@ -40,12 +40,17 @@ convexhull.loadfile()
 convexhull.selectByFitness()
 
 # In[5]
-# 开始切割POSCAR，筛选，最后创建单独文件夹
+# 开始切割POSCAR
 convexhull.poscar_slice()
+# 根据fitreq，筛选目标结构
 convexhull.poscar_selectByFitness()
+# 生成POSCAR文件，以文件夹形式存放在pos_savepath中
 convexhull.poscar_buildfile()
 
 # In[6]
 # 放入对应的POTCAR文件
 convexhull.getPOTCAR()
 
+# In[7]
+# 生成INCAR文件
+# 未来也许会添加这个功能，但目前感觉就bash脚本一行代码的事情，没必要写进来
