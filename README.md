@@ -9,3 +9,5 @@ handy tools to deal with uspex outputs
 **input_files_all**中存放了所有用到过的示例文件
 
 其他文件夹中则存放了对应技术文档各步骤教程中所涉及到的代码和文件
+
+那个.spyproject文件夹是开发者自己的
