@@ -14,7 +14,7 @@ from getConvexHull import read_convexhull  # 读取USPEX输出文件
 from os import mkdir, path  # 用于创建文件夹
 
 # In[2]: 解决乱码问题
-matplotlib.rcParams['font.sans-serif'] = ['SimHei'] # 指定默认字体
+matplotlib.rcParams['font.sans-serif'] = ['Arial'] # 指定默认字体，这个字体期刊常用一些
 matplotlib.rcParams['axes.unicode_minus'] = False # 解决保存图像是负号'-'显示为方块的问题
 
 # In[3]: 读取USPEX输出文件
