@@ -5,7 +5,18 @@ Created on Fri Oct 1 10:05:20 2021
 @author: 张圳南@湖南大学
 """
 class read_convexhull:
-    # 功能列表；[读取文件extended_convex_hull文件，按要求选取结构，获得结构对应的POSCAR文件，获得结构对应的ID、组成、FIT、总焓（每原子和每分子）]
+    # 该类主要用于USPEX输出文件的后处理，包括extended_convex_hull和individuals文件
+    # 目前能进行的功能有：
+    # 1. 读取extended_convex_hull文件
+    # 2. 读取individuals文件
+    # 3. 读取poscar总文件并切片输出
+    # 4. 计算总能量，形成焓，Gibbs能
+    # 5. 生成ase画相图所需要的数据格式refs
+    # 6. 去掉fitness大于某个值的结构
+    # 7. 选取子系统的结构
+    # 8. 去掉化学式相同但是能量更高的结构
+
+    
     def __init__(self,filepath,filetype,elements,datastart=7,pospath=None,pos_savepath=None,potpath=None,atomenergy=[],subsystem=None,fitreq=0.0):
         # 默认extended_convex_hull第7行开始正式有数据
         # 行数请根据实际文件进行设置
@@ -53,9 +64,9 @@ class read_convexhull:
 
     
     def loadfile(self):
-    数据文件
-        对象的基本属性
-        ：id、组成、总焓、体积、fitness
+        # 读取文件，将数据存入对象的基本属性
+        # 对象的基本属性
+        # ：id、组成、总焓、体积、fitness
         import numpy as np
         np.set_printoptions(precision=None,suppress=True)
         self.data=np.loadtxt(self.filepath,skiprows=self.datastart-1)
@@ -398,15 +409,7 @@ class read_convexhull:
             self.gibbs.append(gibbs_dict)
 
 
-                
-
-      
-
-
-
-
-        
-        
+    
          
 def remove_dup(ids,compositions,compositions_vectors,enthalpys,Hfs):
     import numpy as np
@@ -454,3 +457,30 @@ def remove_dup(ids,compositions,compositions_vectors,enthalpys,Hfs):
     Hfs=np.delete(Hfs,remove_loc)
     #print(self.compositions_vector[:10])
     return ids,compositions,compositions_vectors,enthalpys,Hfs
+
+# 定义一个外部的函数，用于计算吉布斯能
+def getGibbs(compositions,poscarpaths,Hfs,mass,gels,T=[298.15]):
+    # 参数解释
+    # mass:元素质量，字典形式，key为元素符号，value为质量
+    # gels:各元素的固体相吉布斯能，字典形式，key为元素符号，value为固体相吉布斯能
+    # T:计算吉布斯能的温度，默认为298.15K，可自行设定，通常应该是一个列表
+    #导入predcitG.py中的函数，计算吉布斯能,默认是计算298.15K的吉布斯能
+    from PredictG import predictG
+
+    #针对每个POSCAR文件，计算不同给定温度下的吉布斯能
+    gibbs = []
+    for poscarpath,compositon,hf in zip(poscarpaths, compositions,Hfs):
+        dGs = []
+        for t in T:
+            dG = predictG(
+                compositon,
+                hf,
+                poscarpath,
+                mass,
+                gels,
+            ).dG(t, vol_per_atom=False)
+            dGs.append(dG)
+        # 以字典形式，存储comp和吉布斯能, key为comp，value为吉布斯能,整体作为列表元素，添加进gibbs中
+        gibbs_dict = {compositon:dGs}
+        gibbs.append(gibbs_dict)
+    return gibbs
