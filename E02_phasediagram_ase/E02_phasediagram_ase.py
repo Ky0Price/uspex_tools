@@ -5,7 +5,6 @@
 
 
 
-
 # In[1]: 导入相关依赖库
 import matplotlib  # 绘图库
 from ase import phasediagram  # 用于绘制相图
@@ -45,7 +44,8 @@ convexhull = read_convexhull(
                             filepath=filepath, 
                             filetype=filetype, 
                             elements=elements, 
-                            datastart=datastart, 
+                            datastart=datastart,
+                            atomenergy=atom_energy,
                             fitreq=fitreq)
 # 加载数据
 convexhull.loadfile()
@@ -68,13 +68,7 @@ pd = phasediagram.PhaseDiagram(refs_upsex)
 dims = 2 # 2D相图
 # dims = 3 # 3D相图
 pd.plot(dims = dims)
-# 保存相图
-while not path.exists('./output_files'):
-    try:
-        mkdir('./output_files')
-    except:
-        pass
-pd.savefig('./output_files/phase_diagram.png') 
+
 
 # In[7]: 放入参考数据
 # 放入从数据库或者参考文献中获得的参考数据，用于验证uspex计算结果的准确性和完备性
@@ -122,5 +116,4 @@ pd = phasediagram.PhaseDiagram(refs)
 dims = 2 # 2D相图
 # dims = 3 # 3D相图
 pd.plot(dims = dims)
-# 保存相图
-pd.savefig('./output_files/phase_diagram_with_refs.png')
+
