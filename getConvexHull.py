@@ -369,9 +369,9 @@ class read_convexhull:
             #os.mkdir(filepath)
             targetpaths.append(targetpath)
         '''pot_ele = [] # 根据不同结构所含元素，指定所需要的POTCAR的种类'''
-        for comp_vector in self.compositions_vector:
+        for comp_vector,targetpath in zip(self.compositions_vector,targetpaths):
             ele = ''
-            for i,j,targetpath in zip(comp_vector,self.elements,targetpaths):
+            for i,j in zip(comp_vector,self.elements):
                 if i != 0:
                     ele += j
             for key,value in potcar_dic.items():

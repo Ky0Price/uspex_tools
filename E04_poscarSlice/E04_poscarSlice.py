@@ -11,7 +11,7 @@ from getConvexHull import read_convexhull
 
 # In[2]
 #主要输入参数准备,以下路径均为相对于本脚本的路径
-filepath = 'input_files/extended_convex_hull_0GPa_prepared'
+filepath = 'E04_poscarSlice/input_files/extended_convex_hull_0GPa_prepared'
 # 注意：
 # 1. 此处的文件路径是相对于本脚本的路径，而不是相对于python的路径
 # 2. 此处用的是经过一定预处理后的extended_convex_hull文件,可以看见文件名为extended_convex_hull_0GPa_prepared
@@ -19,13 +19,13 @@ filepath = 'input_files/extended_convex_hull_0GPa_prepared'
 #   将一些numpy无法识别的字符替换为了空格，以便于读取
 filetype = 'extended_convex_hull'
 elements = ['Li','C','N']
-pospath = 'input_files/extended_convex_hull_POSCARS_0GPa'
+pospath = 'E04_poscarSlice/input_files/extended_convex_hull_POSCARS_0GPa'
 # 存放总POSCARS集合文件的路径
-pos_savepath = 'poscars'
+pos_savepath = 'E04_poscarSlice/poscars'
 # 存放单个POSCAR文件的目标路径
-potpath = 'input_files'
+potpath = 'E04_poscarSlice/input_files'
 # 存放各种POTCAR文件的路径
-fitreq = 0.0
+fitreq = 0.1
 
 # In[3]
 #创建对象

@@ -10,11 +10,11 @@ import matplotlib  # 绘图库
 from ase import phasediagram  # 用于绘制相图
 from FormationEnCalc import FE2refs, FormationEnCalc  # 计算外部数据的形成焓
 from getConvexHull import read_convexhull  # 读取USPEX输出文件
-from os import mkdir, path  # 用于创建文件夹
+#from os import mkdir, path  # 用于创建文件夹
 
 # In[2]: 解决乱码问题
 matplotlib.rcParams['font.sans-serif'] = ['Arial'] # 指定默认字体，这个字体期刊常用一些
-matplotlib.rcParams['axes.unicode_minus'] = False # 解决保存图像是负号'-'显示为方块的问题
+matplotlib.rcParams['axes.unicode_minus'] = False # 解决图像是负号'-'显示为方块的问题
 
 # In[3]: 读取USPEX输出文件
 # 读取USPEX输出文件，得到相图数据，这里以Li-C-N体系为例
@@ -26,7 +26,7 @@ filepath = "E02_phasediagram_ase\input_files\extended_convex_hull_0GPa_prepared"
 #   将一些numpy无法识别的字符替换为了空格，以便于读取
 filetype = 'extended_convex_hull'
 elements = ['Li', 'C', 'N']
-atom_energy = [-1.904144347, # Li单质在0GPa下的能量，eV/atom
+atom_energy_0 = [-1.904144347, # Li单质在0GPa下的能量，eV/atom
                 -9.225171725, # C单质在0GPa下的能量，eV/atom
                 -8.320979825] # N单质在0GPa下的能量，eV/atom
                 # 各元素单质的能量/焓值，
@@ -45,7 +45,7 @@ convexhull = read_convexhull(
                             filetype=filetype, 
                             elements=elements, 
                             datastart=datastart,
-                            atomenergy=atom_energy,
+                            atomenergy=atom_energy_0,
                             fitreq=fitreq)
 # 加载数据
 convexhull.loadfile()
@@ -113,7 +113,7 @@ refs = refs_upsex + ref_mp
 # 创建绘图对象
 pd = phasediagram.PhaseDiagram(refs)
 # 指定相图维度
-dims = 2 # 2D相图
-# dims = 3 # 3D相图
+# dims = 2 # 2D相图
+dims = 3 # 3D相图
 pd.plot(dims = dims)
 
