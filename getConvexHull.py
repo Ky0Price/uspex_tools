@@ -207,8 +207,13 @@ class read_convexhull:
         if self.subsystem == None:
             for comp,toten in zip(self.compositions_vector,self.totalEnergy):
                 Hf=toten
+                #if self.filetype == 'extended_convex_hull':
                 for elenum in range(len(comp)):
                     Hf-=comp[elenum]*self.atomenergy[elenum]
+            '''else:
+                    for elenum in range(len(comp)):
+                        Hf-=comp[elenum]*self.atomenergy[elenum]
+                    Hf = Hf/sum(comp)'''
                 self.Hf.append(Hf)
         else:
             for comp,toten in zip(self.compositions_vector_sub,self.totalEnergy_sub):
@@ -217,6 +222,8 @@ class read_convexhull:
                     Hf -= comp[elenum] * self.atomenergy[atomen_sub]
                 self.Hf.append(Hf)
         return self.Hf #(ev/mole)
+    
+    
         
 
     def getRefs(self):
